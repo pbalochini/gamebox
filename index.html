@@ -43,6 +43,7 @@
       var runGame = false
 
 
+
       // set body default properties
       document.body.style.backgroundColor="white"    // user regular texts
       document.body.style.margin = "0px 0px 0px 0px"  // top, left, right, bottom
@@ -107,13 +108,13 @@
         document.getElementById('main1').onclick = function() { frameClick( 'main1', 1 ) }
         document.getElementById('main2').onclick = function() { frameClick( 'main2', 2 ) }
         document.getElementById('main3').onclick = function() { frameClick( 'main3', 3 ) }
-   
      
       }
 
       function frameClick(idf,idxf) {
         document.getElementById(idf).style.background = getRandomColor(idxf)
         isColorsMatch()
+        document.getElementById("aa").on
       }
 
       function getRandomColor(index) {
@@ -130,7 +131,6 @@
         parent.appendChild(elem)
       }
       
-
       function isColorsMatch() {
         if ( Math.max(...BoxColors) == Math.min(...BoxColors) ) {
           alert("OK")
