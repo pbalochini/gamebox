@@ -1,8 +1,8 @@
 <!--
  +-----------------------------------------------------------------------+
-  Copyright Backware (R) Tecnologia  - Licensed by MIT.
-                     (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
-                         Programming with passion and enthusiatic as forever
+  Copyright (C) Backware Tecnologia  - Licensed by MIT.
+            (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
+                Programming with passion and enthusiatic as forever
 
   Changelog:
     0.0.8 - Create function for constrcut HTML element creation 
@@ -32,7 +32,7 @@
    <script>
 
       // set global variables
-      const APPName = "GameBox 0.1.3"
+      const APPName = "GameBox 0.1.4"
       const NumSqr = 2
       var NumCols = NumSqr
       var NumRows = NumSqr
@@ -85,26 +85,34 @@
             document.getElementById(id).style.width = NumDivsCols+'%'
             document.getElementById(id).style.background = getRandomColor(idx) 
             document.getElementById(id).innerHTML=idx+1
-      
-            // console.log("id="+id)
-            // console.log("idx="+idx)
-            // var oncf = `{ document.getElementById(id).style.background = getRandomColor(idx) }`
-            // comnsole.log(oncf)
-            // alert(oncf)
-            document.getElementById(id).onclick = function() { document.getElementById(id).style.background = getRandomColor(idx) }
-            console.log(document.getElementById(id).onclick)
+       
+            // document.getElementById('"+id+"').style.background = getRandomColor("+idx+")"
             
-        
+            // // console.log(fnstr)
+            // // var salve = eval(fnstr)
+            // // console.log(salve)
 
+            // document.getElementById(id).addEventListener(
+            //   "click", 
+            //   eval("
+            //   
+            
+            // alert (eval ("document.getElementById('"+id+"').style.background ")
+         
+            // // document.getElementById(id).onclick = function() { document.getElementById(id).style.background = getRandomColor(idx) }
+  
+            // console.log(document.getElementById(id).onclick)            
+            document.getElementById(id).onclick = function() { frameClick( id, idxf ) }
 
-            idx++;
+            idx++
           }
         }
       }
 
       function frameClick(idf,idxf) {
-        // alert( typeof(frameClick))
-        document.getElementById(id).style.background = getRandomColor(idx)
+        console.log(idf,idxf)
+        
+        document.getElementById(idf).style.background = getRandomColor(idxf)
       }
 
       function getRandomColor(index) {
