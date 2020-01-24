@@ -33,13 +33,14 @@
 
       // set global variables
       const APPName = "GameBox 0.1.4"
-      const NumSqr = 2
+      var NumSqr = 2
       var NumCols = NumSqr
       var NumRows = NumSqr
       var NumBoxs = NumCols * NumRows
       var NumDivsCols = 100 / NumCols
       var NumDivsRows = 100 / NumRows
-      var BoxColors = []
+      var BoxColors = [99,99]
+      var runGame = false
 
 
       // set body default properties
@@ -55,11 +56,6 @@
       document.getElementById("mainframe").style.display = 'flex'
       document.getElementById("mainframe").style.flexWrap = 'wrap'
       document.getElementById("mainframe").style.position = 'relative'
-
-      // call Create Boxes on the screem game
-
-      createBoxes()
-   
 
       // function activeClicks() {
       //   var idx = 0
@@ -107,17 +103,22 @@
             idx++
           }
         }
+        document.getElementById('main0').onclick = function() { frameClick( 'main0', 0 ) }
+        document.getElementById('main1').onclick = function() { frameClick( 'main1', 1 ) }
+        document.getElementById('main2').onclick = function() { frameClick( 'main2', 2 ) }
+        document.getElementById('main3').onclick = function() { frameClick( 'main3', 3 ) }
+   
+     
       }
 
       function frameClick(idf,idxf) {
-        console.log(idf,idxf)
-        
         document.getElementById(idf).style.background = getRandomColor(idxf)
+        isColorsMatch()
       }
 
       function getRandomColor(index) {
           var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
-          BoxColors[index] = Math.floor(Math.random()*7);
+          BoxColors[index] = Math.floor(Math.random()*3);
         return colorsBase[BoxColors[index]]
       }
 
@@ -129,18 +130,38 @@
         parent.appendChild(elem)
       }
       
+
       function isColorsMatch() {
         if ( Math.max(...BoxColors) == Math.min(...BoxColors) ) {
-          if (confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao 3x3 ?")) 
+          alert("OK")
+          if (confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao XX ?")) 
           {
-            return false;
+            return true
+          } else {
+            window.close
           }
         }
         return true;
       }
   
+      createBoxes()
+
+     
 
 
+      // while ( runGame )
+      //  {
+      //    if ( isColorsMatch() ) 
+      //    {
+      //      // parar musica meio
+      //      if ( confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao "+(NumSqr+1) +"x"+(NumSqr+1) +" ?")) 
+      //      {
+      //        NumSqr++;
+      //        runGame = false 
+      //      }
+      //    }
+      //   }
+      //   this.close
 
     </script>
   </body>
