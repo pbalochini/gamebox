@@ -1,0 +1,93 @@
+<!--
+ +-----------------------------------------------------------------------+
+  Copyright Backware (R) Tecnologia  - Licensed by MIT.
+                     (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
+                         Programming with passion and enthusiatic as forever
+
+  Changelog:
+    0.0.8 - Create function for constrcut HTML element creation 
+    0.0.9 - Create function to change color of box - on click with bug
+  
+ +------------------------------------------------------------------------+
+-->
+<html>
+  <body>
+   <script>
+
+      // set global variables
+      const APPName = "GameBox 0.0.9"
+      
+      var NumCols = 3;
+      var NumRows = 3;
+      var NumBoxs = NumCols * NumRows;
+      var NumDivsCols = 100 / NumCols;
+      var NumDivsRows = 100 / NumRows;
+      var BoxColors = [];
+
+
+      // set body default properties
+      document.body.style.backgroundColor="white"    // user regular texts
+      document.body.style.margin = "0px 0px 0px 0px"  // top, left, right, bottom
+      document.body.style.overflow = "hidden"         // visible, hidden, scroll, auto
+      document.title = APPName                        // set app name on browser
+
+      // create first DOM element : mainframe
+      createElement('div','mainframe' ,document.body)
+      
+      // set styles for whole DOM
+      document.getElementById("mainframe").style.display = 'flex'
+      document.getElementById("mainframe").style.flexWrap = 'wrap'
+      document.getElementById("mainframe").style.position = 'relative'
+
+      // create boxes on demand 
+      var idx = 0
+      for (x=0; x<NumRows;x++) {
+        for (y=0;y<NumCols;y++) {
+          var id = "main"+id
+          createElement('div',id,document.getElementById("mainframe"))
+          document.getElementById(id).style.height = NumDivsRows+'vh'
+          document.getElementById(id).style.width = NumDivsCols+'%'
+          document.getElementById(id).style.background = getRandomColor(idx) 
+          document.getElementById(id).innerHTML=idx+1
+          document.getElementById(id).onclick = function() { BoxClick( id, idx) }
+          idx++;
+        }
+      }
+
+      function BoxClick(idf,idxf) {
+        document.getElementById(idf).style.background = getRandomColor(idxf)
+      }
+
+      function getRandomColor(index) {
+          var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
+          BoxColors[index] = Math.floor(Math.random()*7);
+        return colorsBase[BoxColors[index]]
+      }
+
+      function createElement(element, id, parent) {
+        elem = document.createElement(element)
+        if (id) {
+          elem.id = id
+        }
+        parent.appendChild(elem)
+      }
+      
+      function ColorsMatch() {
+        if ( Math.max(...BoxColors) == Math.min(...BoxColors) ) {
+          if (confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao 3x3 ?")) 
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+  
+
+
+
+    </script>
+  </body>
+</html>
+
+
+

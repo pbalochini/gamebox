@@ -1,0 +1,87 @@
+<!--
+ +-----------------------------------------------------------------------+
+  Copyright Backware (R) Tecnologia  - Licensed by MIT.
+                     (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
+                         Programming with passion and enthusiatic as forever
+
+                      file .......: 
+                      description.:
+                      version.....:
+                      change log..:
+
+ +------------------------------------------------------------------------+
+-->
+<html>
+  <body>
+   <script>
+
+      // set global variables
+
+      const APPName = "GameBox 0.0.7"
+      
+      var NumCols = 2;
+      var NumRows = 2;
+      var NumBoxs = NumCols + NumRows;
+      var NumDivs = 100 / NumCols;
+      var BoxColors = [];
+
+
+      // set body default properties
+      document.body.style.backgroundColor="white"    // user regular texts
+      document.body.style.margin = "0px 0px 0px 0px"  // top, left, right, bottom
+      document.body.style.overflow = "hidden"         // visible, hidden, scroll, auto
+      document.title = APPName                        // set app name on browser
+
+      // create first DOM element : mainframe
+      createElement('div','main' ,document.body)
+      createElement('div','main1',document.getElementById("main"))
+      createElement('div','main2',document.getElementById("main"))
+      createElement('div','main3',document.getElementById("main"))
+      createElement('div','main4',document.getElementById("main"))
+
+      document.getElementById("main").style.display = 'flex'
+      document.getElementById("main").style.flexWrap = 'wrap'
+      document.getElementById("main").style.position = 'relative'
+
+      document.getElementById("main1").style.height = NumDivs+'vh'
+      document.getElementById("main2").style.height = NumDivs+'vh'
+      document.getElementById("main3").style.height = NumDivs+'vh'
+      document.getElementById("main4").style.height = NumDivs+'vh'
+
+
+      document.getElementById("main1").style.width = NumDivs+'%'
+      document.getElementById("main2").style.width = NumDivs+'%'
+      document.getElementById("main3").style.width = NumDivs+'%'
+      document.getElementById("main4").style.width = NumDivs+'%'
+
+      document.getElementById("main1").style.background = getRandomColor(0)
+      document.getElementById("main2").style.background = getRandomColor(1)
+      document.getElementById("main3").style.background = getRandomColor(2)
+      document.getElementById("main4").style.background = getRandomColor(3)
+
+      document.getElementById("main1").innerHTML="1"
+      document.getElementById("main2").innerHTML="2"
+      document.getElementById("main3").innerHTML="3"
+      document.getElementById("main4").innerHTML="4"
+
+
+      function getRandomColor(index) {
+          var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
+          BoxColors[index] = Math.floor(Math.random()*7);
+        return colorsBase[BoxColors[index]]
+      }
+
+      function createElement(element, id, parent) {
+        elem = document.createElement(element)
+        if (id) {
+          elem.id = id
+        }
+        parent.appendChild(elem)
+      }
+      
+    </script>
+  </body>
+</html>
+
+
+

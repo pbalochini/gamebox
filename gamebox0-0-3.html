@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+body {
+  margin-top: 0px;
+  overflow: hidden;
+  
+
+  ;
+} 
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  font-size: 300%;
+
+}
+.item1 {
+  background: #FCC;
+  height: 50vh;
+  width: 50%;
+}
+.item2 {
+  background: rgb(92, 75, 165);
+  height: 50vh;
+  width: 50%;
+}
+
+.item3 {
+  background: rgb(48, 208, 9);
+  height: 50vh;
+  width: 50%;
+}
+
+.item4 {
+  background: rgb(235, 9, 20);
+  height: 50vh;
+  width: 50%;
+}
+
+</style>
+</head>
+<body {
+   margin-top: 0px;
+  }
+>
+<audio 
+  controls src="plimplim.mp3"
+  autoplay 
+  hidden
+  id="inicio"
+  >
+    Your browser does not support the
+    <code>audio</code> element.
+</audio>
+
+<audio 
+  controls src="tic-tac.mp3"
+  autoplay 
+  loop
+  hidden
+  id="meio"
+  >
+    Your browser does not support the
+    <code>audio</code> element.
+  </audio>
+
+  <audio 
+    controls src="bomb.mp3"
+    hidden
+    id="fim"
+    >
+    Your browser does not support the
+    <code>audio</code> element.
+  </audio>
+
+
+<div class="grid">
+  <div class="item1"></div>
+  <div class="item2"></div>
+  <div class="item3"></div>  
+  <div class="item4"></div>
+</div>
+<script>
+
+  alert("GAMEBOX 0.0.3 - Versao '2x2'. Clique nos quadrados ate obter as mesmas cores...");
+  
+ var Rows = 2;
+ var Cols = 2;
+ var boxColor = [1,2,3,4];
+ var cor = '';
+
+ var boxitem1 = document.querySelector('div.item1');
+ var boxitem2 = document.querySelector('div.item2');
+ var boxitem3 = document.querySelector('div.item3');
+ var boxitem4 = document.querySelector('div.item4');
+
+ cor = getRandomColor(0);
+ boxitem1.style.backgroundColor = cor;
+ cor = getRandomColor(1);
+ boxitem2.style.backgroundColor = cor;
+ cor = getRandomColor(2);
+ boxitem3.style.backgroundColor = cor;
+ cor = getRandomColor(3);
+ boxitem4.style.backgroundColor = cor;
+
+ boxitem1.onclick = function() {
+   cor = getRandomColor(0);
+   boxitem1.style.backgroundColor = cor;
+ }      
+
+ boxitem2.onclick = function() {
+   cor = getRandomColor(1);
+   boxitem2.style.backgroundColor = cor;
+ }     
+    
+ boxitem3.onclick = function() {
+   cor = getRandomColor(2);
+   boxitem3.style.backgroundColor = cor;
+ }
+
+ boxitem4.onclick = function() {
+   cor = getRandomColor(3);
+   boxitem4.style.backgroundColor = cor;
+ }     
+
+ function isBingo() {
+   if ( Math.max(...boxColor) == Math.min(...boxColor) )
+   {
+     var x = document.getElementById("meio");
+     x.pause();
+      
+     var x = document.getElementById("fim");
+     x.play();
+      
+     if !(confirm ("Bingo. Voce conseguiu. Parabens!!!! Avancar na Versao 3x3 ?")) {
+       return false;
+     }
+     var x = document.getElementById("meio");
+     x.play();
+   }
+   return true;
+ }
+ 
+ function getRandomColor(index) {
+   var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
+     boxColor[index] = Math.floor(Math.random()*4);
+     return colorsBase[boxColor[index]];
+   }
+</script>
+</body>
+</html>
+
