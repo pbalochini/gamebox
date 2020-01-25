@@ -33,7 +33,7 @@
 
       // set global variables
       const APPName = "GameBox 0.1.4"
-      var NumSqr = 2
+      var NumSqr = 20
       var NumCols = NumSqr
       var NumRows = NumSqr
       var NumBoxs = NumCols * NumRows
@@ -81,7 +81,7 @@
             document.getElementById(id).style.height = NumDivsRows+'vh'
             document.getElementById(id).style.width = NumDivsCols+'%'
             document.getElementById(id).style.background = getRandomColor(idx) 
-            document.getElementById(id).innerHTML=idx+1
+            // document.getElementById(id).innerHTML=idx+1
        
             // document.getElementById('"+id+"').style.background = getRandomColor("+idx+")"
             
@@ -119,7 +119,7 @@
 
       function getRandomColor(index) {
           var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
-          BoxColors[index] = Math.floor(Math.random()*3);
+          BoxColors[index] = Math.floor(Math.random()*7);
         return colorsBase[BoxColors[index]]
       }
 
