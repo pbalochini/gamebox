@@ -61,7 +61,7 @@
    <script>
 
       // set global variables
-      const APPName = "GameBox 0.1.6a"
+      const APPName = "GameBox 0.1.7"
       var AppFlow = true
       var NumSqr = 2
       var NumCols = NumSqr
@@ -70,7 +70,8 @@
       var NumDivsCols = 100 / NumCols
       var NumDivsRows = 100 / NumRows
       var BoxColors = [99,99]
-      var NumColors = 3
+      var NumColors = 8
+      var TimeStart = new Date();
  
       // set body default properties
       document.body.style.backgroundColor="white"    // user regular texts
@@ -80,11 +81,9 @@
 
       // create first DOM element : mainframe
 
-
-    alert(APPName+"\n\nClique nos quadros ate obter as mesmas cores em todos...\n\n Iniciando a fase : "+NumCols+"x"+NumRows+"\n\n\n(C) B&F Developers")
+      alert(APPName+"\n\nClique nos quadros ate obter as mesmas cores em todos...\n\n Iniciando a fase : "+NumCols+"x"+NumRows+"\n\n\n(C) B&F Developers")
 
       createElement('div','mainframe' ,document.body)
-
 
       // set styles for whole DOM
       document.getElementById("mainframe").style.display = 'flex'
@@ -92,6 +91,12 @@
       document.getElementById("mainframe").style.position = 'relative'
 
 
+      function ElapsedTime()
+      {
+        var TimeEnd = new Date()
+
+        return ( Math.round((TimeEnd-TimeStart)/1000))
+      }
 
 
 
@@ -105,6 +110,7 @@
         NumBoxs = NumCols * NumRows
         NumDivsCols = 100 / NumCols
         NumDivsRows = 100 / NumRows
+        
 
         for (x=0; x<NumRows;x++) {
           for (y=0;y<NumCols;y++) {
@@ -119,6 +125,7 @@
             idx++
           }
         }
+        TimeStart = new Date();
       }
 
       function frameClick() {
@@ -142,7 +149,7 @@
             
             NumSqr++;
 
-            alert("Parabens!!!\n\nVoce levou X seguntos.... \n\n Avancando para fase : "+NumSqr+"x"+NumSqr)
+            alert("Parabens!!!\n\nVoce levou "+ElapsedTime()+" segundos.... \n\nAvancando para fase : "+NumSqr+"x"+NumSqr)
             
             var StartMusicEffect = document.getElementById("StartMusicEffect");
             StartMusicEffect.play()
