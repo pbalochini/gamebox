@@ -9,6 +9,8 @@
     0.0.9 - Create function to change color of box - on click with bug
     0.1.0 - Bug fix: onclick does not applied to correct box.
     0.1.3 - Criado diretorio proprio para publicacao github e netlify.com 
+    0.1.4 - Bug fixed to how calculated box and array
+    0.1.5 - Clear <nodes class=""></nodes>
   
 
     MVP
@@ -23,6 +25,7 @@
     - fazer ranking dos records
     - homolocar IPHONE etc.... utilizar parametros webkit CSS
     - remover URL, MENU, etc... e deixar em full screen
+    - colocar matriz com numero de clickes dentro do box
 
     
  +------------------------------------------------------------------------+
@@ -32,18 +35,16 @@
    <script>
 
       // set global variables
-      const APPName = "GameBox 0.1.4"
-      var NumSqr = 20
+      const APPName = "GameBox 0.1.5"
+      var AppFlow = true
+      var NumSqr = 2
       var NumCols = NumSqr
       var NumRows = NumSqr
       var NumBoxs = NumCols * NumRows
       var NumDivsCols = 100 / NumCols
       var NumDivsRows = 100 / NumRows
       var BoxColors = [99,99]
-      var runGame = false
-
-
-
+ 
       // set body default properties
       document.body.style.backgroundColor="white"    // user regular texts
       document.body.style.margin = "0px 0px 0px 0px"  // top, left, right, bottom
@@ -51,76 +52,91 @@
       document.title = APPName                        // set app name on browser
 
       // create first DOM element : mainframe
+
+      createElement('audio','startEffect' ,document.body)
+      createElement('audio','middleEffect' ,document.body)
+      createElement('audio','endEffect' ,document.body)
       createElement('div','mainframe' ,document.body)
-      
+
+
       // set styles for whole DOM
       document.getElementById("mainframe").style.display = 'flex'
       document.getElementById("mainframe").style.flexWrap = 'wrap'
       document.getElementById("mainframe").style.position = 'relative'
 
-      // function activeClicks() {
-      //   var idx = 0
-      //   for (x=0; x<NumRows;x++) {
-      //     for (y=0;y<NumCols;y++) {
-      //       var id = "main"+idx 
-      //       document.getElementById(id).onclick = function() {frameClick(id, idx)}
-      //       console.log(document.getElementById(id).onclick)
-      //       // alert(document.getElementById(id).onclick)
-      //       idx++;
-      //     }
-      //   }
-      // }
+
+
+
 
       // function to create boxes on demand 
       function createBoxes() {
         var idx = 0
+        NumCols = NumSqr;
+        NumRows = NumSqr;
+        NumCols = NumSqr
+        NumRows = NumSqr
+        NumBoxs = NumCols * NumRows
+        NumDivsCols = 100 / NumCols
+        NumDivsRows = 100 / NumRows
+
+
+       
+        document.getElementById("startEffect").controls.src = "plimplim.mp3"
+        // document.getElementById("startEffect").hidden = true
+        // document.getElementById("startEffect").play()
+
+
+
+
         for (x=0; x<NumRows;x++) {
           for (y=0;y<NumCols;y++) {
-            var id = "main"+idx 
+            var id = idx.toString(); 
             createElement('div',id,document.getElementById("mainframe"))
             document.getElementById(id).style.height = NumDivsRows+'vh'
             document.getElementById(id).style.width = NumDivsCols+'%'
             document.getElementById(id).style.background = getRandomColor(idx) 
-            // document.getElementById(id).innerHTML=idx+1
-       
-            // document.getElementById('"+id+"').style.background = getRandomColor("+idx+")"
-            
-            // // console.log(fnstr)
-            // // var salve = eval(fnstr)
-            // // console.log(salve)
-
-            // document.getElementById(id).addEventListener(
-            //   "click", 
-            //   eval("
-            //   
-            
-            // alert (eval ("document.getElementById('"+id+"').style.background ")
-         
-            // // document.getElementById(id).onclick = function() { document.getElementById(id).style.background = getRandomColor(idx) }
-  
-            // console.log(document.getElementById(id).onclick)            
-            document.getElementById(id).onclick = function() { frameClick( id, idxf ) }
+            // document.getElementById(id).innerHTML=document.getElementById(id).style.background
+            document.getElementById(id).onclick = function() { frameClick() }
 
             idx++
           }
         }
-        document.getElementById('main0').onclick = function() { frameClick( 'main0', 0 ) }
-        document.getElementById('main1').onclick = function() { frameClick( 'main1', 1 ) }
-        document.getElementById('main2').onclick = function() { frameClick( 'main2', 2 ) }
-        document.getElementById('main3').onclick = function() { frameClick( 'main3', 3 ) }
-     
       }
 
-      function frameClick(idf,idxf) {
-        document.getElementById(idf).style.background = getRandomColor(idxf)
-        isColorsMatch()
-        document.getElementById("aa").on
+      function frameClick() {
+        if (AppFlow) { 
+          setRandomColor()       
+          if ( isColorsMatch() )
+          {
+              AppFlow = false
+              return true
+          } else
+          {
+            return false
+          }
+        } else
+        {
+          alert("Parabens !!!! Vamos avancar....")
+          NumSqr++;
+          createBoxes()
+          AppFlow = true
+
+        }
       }
 
       function getRandomColor(index) {
           var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
           BoxColors[index] = Math.floor(Math.random()*7);
         return colorsBase[BoxColors[index]]
+      }
+
+      function setRandomColor() {
+          var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"]
+          var newcolorindex = Math.floor(Math.random()*7)
+          BoxColors[parseInt(event.target.id)] = newcolorindex
+          event.target.style.backgroundColor = colorsBase[newcolorindex]
+          // event.target.innerHTML = colorsBase[newcolorindex]
+        return 
       }
 
       function createElement(element, id, parent) {
@@ -133,39 +149,14 @@
       
       function isColorsMatch() {
         if ( Math.max(...BoxColors) == Math.min(...BoxColors) ) {
-          alert("OK")
-          if (confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao XX ?")) 
-          {
             return true
           } else {
-            window.close
+            return false
           }
-        }
-        return true;
       }
-  
+
       createBoxes()
-
-     
-
-
-      // while ( runGame )
-      //  {
-      //    if ( isColorsMatch() ) 
-      //    {
-      //      // parar musica meio
-      //      if ( confirm ("Bingo. Voce conseguiu em segundos. Parabens!!!! Avancar na Versao "+(NumSqr+1) +"x"+(NumSqr+1) +" ?")) 
-      //      {
-      //        NumSqr++;
-      //        runGame = false 
-      //      }
-      //    }
-      //   }
-      //   this.close
 
     </script>
   </body>
 </html>
-
-
-
