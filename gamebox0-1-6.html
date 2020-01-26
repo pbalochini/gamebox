@@ -1,0 +1,198 @@
+<!--
+ +-----------------------------------------------------------------------+
+  Copyright (C) Backware Tecnologia  - Licensed by MIT.
+            (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
+                Programming with passion and enthusiatic as forever
+
+  Changelog:
+    0.0.8 - Create function for constrcut HTML element creation 
+    0.0.9 - Create function to change color of box - on click with bug
+    0.1.0 - Bug fix: onclick does not applied to correct box.
+    0.1.3 - Criado diretorio proprio para publicacao github e netlify.com 
+    0.1.4 - Bug fixed to how calculated box and array
+    0.1.5 - Clear <nodes class=""></nodes>
+    0.1.6 - Adicionado musica de fundo e efeitos sonoros
+            Adicionadoa funcao de nao repetir cores no mesmo click
+  
+
+    MVP
+
+    - colocar timer flutuante tempo 1 munuto por fazer?
+    - fazer ranking dos records
+    - homolocar IPHONE etc.... utilizar parametros webkit CSS
+    - remover URL, MENU, etc... e deixar em full screen
+    - colocar matriz com numero de clickes dentro do box
+    
+
+    
+ +------------------------------------------------------------------------+
+-->
+<html>
+  <body>
+    <audio 
+    controls src="plimplim.mp3"
+    autoplay 
+    hidden
+    id="StartMusicEffect"
+    >
+      Your browser does not support the
+      <code>audio</code> element.
+  </audio>
+  
+  <audio 
+    controls src="tic-tac.mp3"
+    autoplay 
+    loop
+    hidden
+    id="GameMusicEffect"
+    >
+      Your browser does not support the
+      <code>audio</code> element.
+    </audio>
+  
+    <audio 
+      controls src="bomb.mp3"
+      hidden
+      id="GameOverMusicEffect"
+      >
+      Your browser does not support the
+      <code>audio</code> element.
+    </audio>
+   <script>
+
+      // set global variables
+      const APPName = "GameBox 0.1.6a"
+      var AppFlow = true
+      var NumSqr = 2
+      var NumCols = NumSqr
+      var NumRows = NumSqr
+      var NumBoxs = NumCols * NumRows
+      var NumDivsCols = 100 / NumCols
+      var NumDivsRows = 100 / NumRows
+      var BoxColors = [99,99]
+      var NumColors = 3
+ 
+      // set body default properties
+      document.body.style.backgroundColor="white"    // user regular texts
+      document.body.style.margin = "0px 0px 0px 0px"  // top, left, right, bottom
+      document.body.style.overflow = "hidden"         // visible, hidden, scroll, auto
+      document.title = APPName                        // set app name on browser
+
+      // create first DOM element : mainframe
+
+
+    alert(APPName+"\n\nClique nos quadros ate obter as mesmas cores em todos...\n\n Iniciando a fase : "+NumCols+"x"+NumRows+"\n\n\n(C) B&F Developers")
+
+      createElement('div','mainframe' ,document.body)
+
+
+      // set styles for whole DOM
+      document.getElementById("mainframe").style.display = 'flex'
+      document.getElementById("mainframe").style.flexWrap = 'wrap'
+      document.getElementById("mainframe").style.position = 'relative'
+
+
+
+
+
+      // function to create boxes on demand 
+      function createBoxes() {
+        var idx = 0
+        NumCols = NumSqr;
+        NumRows = NumSqr;
+        NumCols = NumSqr
+        NumRows = NumSqr
+        NumBoxs = NumCols * NumRows
+        NumDivsCols = 100 / NumCols
+        NumDivsRows = 100 / NumRows
+
+        for (x=0; x<NumRows;x++) {
+          for (y=0;y<NumCols;y++) {
+            var id = idx.toString(); 
+            createElement('div',id,document.getElementById("mainframe"))
+            document.getElementById(id).style.height = NumDivsRows+'vh'
+            document.getElementById(id).style.width = NumDivsCols+'%'
+            document.getElementById(id).style.background = getRandomColor(idx) 
+            // document.getElementById(id).innerHTML=document.getElementById(id).style.background
+            document.getElementById(id).onclick = function() { frameClick() }
+
+            idx++
+          }
+        }
+      }
+
+      function frameClick() {
+        if (AppFlow) { 
+            setRandomColor()       
+            if ( isColorsMatch() )
+            {
+              AppFlow = false
+              return true
+            } else
+            {
+              return false
+            }
+        } else
+        {
+            var GameMusicEffect = document.getElementById("GameMusicEffect");
+            GameMusicEffect.pause()
+
+            var GameOverMusicEffect = document.getElementById("GameOverMusicEffect");
+            GameOverMusicEffect.play()
+            
+            NumSqr++;
+
+            alert("Parabens!!!\n\nVoce levou X seguntos.... \n\nAvancando para fase : "+NumSqr+"x"+NumSqr)
+            
+            var StartMusicEffect = document.getElementById("StartMusicEffect");
+            StartMusicEffect.play()
+
+            createBoxes()
+
+            // var musicEffect = document.getElementById("GameMusicEffect")
+            GameMusicEffect.play()
+
+            AppFlow = true
+
+          }
+      }
+
+      function getRandomColor(index) {
+          var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"];
+          BoxColors[index] = Math.floor(Math.random()*NumColors);
+        return colorsBase[BoxColors[index]]
+      }
+
+      function setRandomColor() {
+          var colorsBase = ["white","yellow","orange","green","blue","red","brown","black"]
+          var newcolorindex = Math.floor(Math.random()*NumColors)
+          while ( newcolorindex ==  BoxColors[parseInt(event.target.id)]) {
+            newcolorindex = Math.floor(Math.random()*NumColors)
+          }
+          BoxColors[parseInt(event.target.id)] = newcolorindex
+          event.target.style.backgroundColor = colorsBase[newcolorindex]
+          // event.target.innerHTML = colorsBase[newcolorindex]
+        return 
+      }
+
+      function createElement(element, id, parent) {
+        elem = document.createElement(element)
+        if (id) {
+          elem.id = id
+        }
+        parent.appendChild(elem)
+      }
+      
+      function isColorsMatch() {
+        if ( Math.max(...BoxColors) == Math.min(...BoxColors) ) {
+            return true
+          } else {
+            return false
+          }
+      }
+
+      createBoxes()
+
+    </script>
+  </body>
+</html>
