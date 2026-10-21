@@ -1,0 +1,321 @@
+<!--
+ +-----------------------------------------------------------------------+
+  Copyright (C) Backware Tecnologia  - Licensed by MIT.
+            (C) PBSoftware Inc. 1980-2020 **** 40 Years Programming
+                Programming with passion and enthusiatic as forever
+
+  Changelog:
+    0.0.8 - Create function for constrcut HTML element creation
+    0.0.9 - Create function to change color of box - on click with bug
+    0.1.0 - Bug fix: onclick does not applied to correct box.
+    0.1.3 - Criado diretorio proprio para publicacao github e netlify.com
+    0.1.4 - Bug fixed to how calculated box and array
+    0.1.5 - Clear <nodes class=""></nodes>
+    0.1.6 - Adicionado musica de fundo e efeitos sonoros
+            Adicionadoa funcao de nao repetir cores no mesmo click
+    0.1.7 - Versao publicada anteriormente (preservada em gamebox0-1-7.html)
+    0.1.8 - Otimizacoes:
+            - Documento HTML valido (doctype, head, meta charset/viewport, lang)
+            - Layout por CSS Grid: sem arredondamento de 100/N% e sem misturar %/vh
+            - Quadros criados com DocumentFragment (1 insercao no DOM) e with
+              referencia direta ao elemento (sem getElementById repetido)
+            - Um unico listener no tabuleiro (delegacao de evento) em vez de N onclick
+            - Fim da dependencia da global window.event (compativel com outros browsers)
+            - Corrigido bug de IDs duplicados ao avancar de fase (tabuleiro e limpo)
+            - Cores iniciais sorteadas sem nascer com a fase ja resolvida
+            - Vitoria resolvida no mesmo clique (nao exige mais um clique extra)
+            - alert() substituido por overlay em DOM (nao bloqueia a pagina)
+            - Audio reutilizado e liberado no primeiro toque do usuario
+            - Codigo encapsulado em IIFE com "use strict" e const/let
+            - Ao completar todos os quadros: pausa de 1,5s (VICTORY_PAUSE_MS)
+              antes de exibir a mensagem de fim de fase sobre a tela
+            - Mensagem em cartao centralizado na tela cheia, sem mascara escura,
+              para as cores do tabuleiro continuarem visiveis
+
+  MVP
+
+    - colocar timer flutuante tempo 1 munuto por fazer?
+    - fazer ranking dos records
+    - homolocar IPHONE etc.... utilizar parametros webkit CSS
+    - remover URL, MENU, etc... e deixar em full screen
+    - colocar matriz com numero de clickes dentro do box
+
+ +------------------------------------------------------------------------+
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#000000" />
+    <title>GameBox</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #fff;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+        font-family: system-ui, sans-serif;
+      }
+
+      #mainframe {
+        display: grid;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      .c0 { background-color: #ffffff; }
+      .c1 { background-color: #ffff00; }
+      .c2 { background-color: #ffa500; }
+      .c3 { background-color: #008000; }
+      .c4 { background-color: #0000ff; }
+      .c5 { background-color: #ff0000; }
+      .c6 { background-color: #a52a2a; }
+      .c7 { background-color: #000000; }
+
+      /* camada de mensagem cobrindo a tela inteira, mas sem mascara:
+         o tabuleiro (as cores) continua visivel ao redor do cartao */
+      #overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: transparent;
+      }
+
+      #overlay[hidden] {
+        display: none;
+      }
+
+      #overlay .panel {
+        max-width: 90vw;
+        padding: 24px 32px;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.78);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+        color: #fff;
+        text-align: center;
+        white-space: pre-line;
+      }
+
+      #overlay .panel h1 {
+        margin: 0 0 12px 0;
+        font-size: 1.5rem;
+      }
+
+      #overlay .panel p {
+        margin: 0 0 16px 0;
+        line-height: 1.4;
+      }
+
+      #overlay .panel button {
+        padding: 12px 32px;
+        font-size: 1rem;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mainframe"></div>
+
+    <div id="overlay" hidden>
+      <div class="panel">
+        <h1 id="overlayTitle"></h1>
+        <p id="overlayText"></p>
+        <button id="overlayButton" type="button"></button>
+      </div>
+    </div>
+
+    <audio id="StartMusicEffect" src="plimplim.mp3" preload="auto" hidden>
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+
+    <audio id="GameMusicEffect" src="tic-tac.mp3" preload="auto" loop hidden>
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+
+    <audio id="GameOverMusicEffect" src="bomb.mp3" preload="auto" hidden>
+      Your browser does not support the <code>audio</code> element.
+    </audio>
+
+    <script>
+      (function () {
+        "use strict";
+
+        // set global variables
+        const APPName = "GameBox 0.1.8";
+        const NUM_COLORS = 8;
+        const FIRST_SQUARE = 2;
+        const VICTORY_PAUSE_MS = 1500; // pausa antes de mostrar a mensagem de fim de fase
+
+        const mainframe = document.getElementById("mainframe");
+        const overlay = document.getElementById("overlay");
+        const overlayTitle = document.getElementById("overlayTitle");
+        const overlayText = document.getElementById("overlayText");
+        const overlayButton = document.getElementById("overlayButton");
+        const startSound = document.getElementById("StartMusicEffect");
+        const loopSound = document.getElementById("GameMusicEffect");
+        const overSound = document.getElementById("GameOverMusicEffect");
+
+        let numSquare = FIRST_SQUARE;
+        let numBoxes = 0;
+        let boxColors = [];
+        let timeStart = new Date();
+        let locked = true;
+
+        document.title = APPName;
+
+        // audio: play() devolve uma promise rejeitada quando o navegador
+        // ainda nao autorizou som (politica de autoplay)
+        function playFromStart(sound) {
+          sound.currentTime = 0;
+          const promise = sound.play();
+          if (promise) promise.catch(function () {});
+        }
+
+        function playLoop() {
+          const promise = loopSound.play();
+          if (promise) promise.catch(function () {});
+        }
+
+        function elapsedTime() {
+          return Math.round((new Date() - timeStart) / 1000);
+        }
+
+        // sorteia uma cor diferente da atual do quadro
+        function randomColorIndex(excludeIndex) {
+          let index = Math.floor(Math.random() * NUM_COLORS);
+          while (index === excludeIndex) {
+            index = Math.floor(Math.random() * NUM_COLORS);
+          }
+          return index;
+        }
+
+        function isColorsMatch() {
+          for (let i = 1; i < boxColors.length; i++) {
+            if (boxColors[i] !== boxColors[0]) return false;
+          }
+          return true;
+        }
+
+        // function to create boxes on demand
+        function createBoxes() {
+          numBoxes = numSquare * numSquare;
+          mainframe.replaceChildren();
+          mainframe.style.gridTemplateColumns = "repeat(" + numSquare + ", 1fr)";
+          mainframe.style.gridTemplateRows = "repeat(" + numSquare + ", 1fr)";
+
+          const fragment = document.createDocumentFragment();
+          const boxes = [];
+          boxColors = new Array(numBoxes);
+
+          for (let i = 0; i < numBoxes; i++) {
+            boxColors[i] = randomColorIndex(-1);
+            const box = document.createElement("div");
+            box.dataset.index = i;
+            box.className = "c" + boxColors[i];
+            boxes.push(box);
+            fragment.appendChild(box);
+          }
+
+          // a fase nao pode comecar ja resolvida
+          while (isColorsMatch()) {
+            const k = Math.floor(Math.random() * numBoxes);
+            boxColors[k] = randomColorIndex(boxColors[k]);
+            boxes[k].className = "c" + boxColors[k];
+          }
+
+          mainframe.appendChild(fragment);
+          timeStart = new Date();
+        }
+
+        function frameClick(event) {
+          if (locked) return;
+
+          const box = event.target.closest("[data-index]");
+          if (!box) return;
+
+          const index = Number(box.dataset.index);
+          boxColors[index] = randomColorIndex(boxColors[index]);
+          box.className = "c" + boxColors[index];
+
+          if (isColorsMatch()) showVictory();
+        }
+
+        function showVictory() {
+          locked = true;
+          loopSound.pause();
+          playFromStart(overSound);
+
+          // pausa o jogo por um instante e depois mostra a mensagem sobre a tela
+          setTimeout(function () {
+            const next = numSquare + 1;
+            showOverlay(
+              "Parabéns!!!",
+              "Você levou " + elapsedTime() + " segundos.\nAvancando para fase: " + next + "x" + next,
+              "Continuar",
+              nextPhase
+            );
+          }, VICTORY_PAUSE_MS);
+        }
+
+        function nextPhase() {
+          hideOverlay();
+          numSquare++;
+          createBoxes();
+          playFromStart(startSound);
+          playLoop();
+          locked = false;
+        }
+
+        function showOverlay(title, text, label, onClick) {
+          overlayTitle.textContent = title;
+          overlayText.textContent = text;
+          overlayButton.textContent = label;
+          overlayButton.onclick = onClick;
+          overlay.hidden = false;
+        }
+
+        function hideOverlay() {
+          overlayButton.onclick = null;
+          overlay.hidden = true;
+        }
+
+        // um unico listener para todos os quadros (delegacao de evento)
+        mainframe.addEventListener("click", frameClick);
+
+        // tela inicial: o toque no botao tambem libera o audio do navegador
+        showOverlay(
+          APPName,
+          "Clique nos quadros até obter as mesmas cores em todos...\n\nFase inicial: " +
+            FIRST_SQUARE +
+            "x" +
+            FIRST_SQUARE +
+            "\n\n(C) B&F Developers",
+          "Iniciar",
+          function () {
+            hideOverlay();
+            createBoxes();
+            playFromStart(startSound);
+            playLoop();
+            locked = false;
+          }
+        );
+      })();
+    </script>
+  </body>
+</html>
